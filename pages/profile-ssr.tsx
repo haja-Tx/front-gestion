@@ -11,26 +11,15 @@ export default function SsrProfile({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <Layout>
-      <h1>Your GitHub profile</h1>
+      <h1>Your profile</h1>
       <h2>
-        This page uses{" "}
-        <a href="https://nextjs.org/docs/basic-features/pages#server-side-rendering">
-          Server-side Rendering (SSR)
-        </a>{" "}
-        and{" "}
-        <a href="https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering">
-          getServerSideProps
-        </a>
+        Info perso
       </h2>
 
       {user?.isLoggedIn && (
         <>
           <p style={{ fontStyle: "italic" }}>
-            Public data, from{" "}
-            <a href={`https://github.com/${user.lastname}`}>
-              https://github.com/{user.lastname}
-            </a>
-            , reduced to `login` and `avatar_url`.
+            data
           </p>
           <pre>{JSON.stringify(user, null, 2)}</pre>
         </>
@@ -51,7 +40,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
     res.end();
     return {
       props: {
-        user: { isLoggedIn: false, email: "", lastname: "" } as User,
+        user: { isLoggedIn: false, email: "", lastname: "", id: null, customer: null } as User,
       },
     };
   }

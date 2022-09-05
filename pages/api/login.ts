@@ -7,7 +7,7 @@ export default withSessionRoute(loginRoute);
 async function loginRoute(req: any, res: any){
 
     try{
-      const response = await fetch(`https://127.0.0.1:8000/api/login`,{
+      const response = await fetch(`https://127.0.0.1:8000/api/login`,({
         agent: new Agent({
           rejectUnauthorized: false,
       }),
@@ -16,12 +16,12 @@ async function loginRoute(req: any, res: any){
         'Content-Type': 'application/json',
         },
         body: JSON.stringify(req.body),
-      })
+      }) as any)
       const data = await response.json()
       switch (data.status) {
         case 200:
-          const {email, lastname, imageName} = JSON.parse(data.user.content)
-          const user = { isLoggedIn: true, email, lastname, imageName } as User;
+          const {email, lastname, imageName, id, roles, customer} = JSON.parse(data.user.content)
+          const user = { isLoggedIn: true, email, lastname, imageName, id, roles, customer } as User;
           req.session.user = user;
           await req.session.save();
           res.json(user);

@@ -3,10 +3,16 @@ import { sessionOptions } from "../../lib/session";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export type User = {
-  isLoggedIn: boolean;
-  email: string;
-  lastname: string;
+  isLoggedIn: boolean
+  email: string
+  lastname: string
   imageName: string
+  id: number
+  roles: {}
+  customer: {
+    id: number
+    company: string
+  }
 };
 
 export default withIronSessionApiRoute(userRoute, sessionOptions);
@@ -25,6 +31,9 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse<User>) {
       email: "",
       lastname: "",
       imageName: "",
+      roles: null,
+      id: null,
+      customer: null
     });
   }
 }
