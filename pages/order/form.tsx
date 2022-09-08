@@ -1,10 +1,11 @@
-import { TrashIcon } from "@heroicons/react/24/outline"
+import { PlusCircleIcon, TrashIcon } from "@heroicons/react/24/outline"
 import { Agent } from "https"
 import { withIronSessionSsr } from "iron-session/next"
-import { useId, useState } from "react"
+import { useState } from "react"
 import { sessionOptions } from "../../lib/session"
 import { User } from "../api/user"
 import { v4 as uuid } from 'uuid'
+import Link from 'next/link'
 
 function Form({products}){
     
@@ -31,10 +32,15 @@ function Form({products}){
     const handleSubmit = event => {
         event.preventDefault()
         const id = uuid()
-        const total = event.target.quantity.value * 400
+        const designation = event.target.designation.value
+        const product = products.find(function(product){
+            return product.designation === designation
+        })
+        const total = event.target.quantity.value * product.prixUnitaire
         const data = {
             id: id,
-            designation: event.target.designation.value,
+            productId:product.id,
+            designation: designation,
             quantity: event.target.quantity.value,
             remise: event.target.remise.value,
             pu: event.target.designation.getAttribute("data-pu"),
@@ -49,23 +55,24 @@ function Form({products}){
             quantity: 0,
             remise: 0
         })
-        
+        console.log(newElements)
     }
     return (
         <>
         <form className="w-full max-w-sm" onSubmit={handleSubmit}>
             <div className="flex items-center border-b border-teal-500 py-2">
-                <select id="designation" name="designation" className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
+                <select onChange={handleChange} value={newElement.designation} id="designation" name="designation" className="dark:bg-gray-800 dark:text-gray-400 mt-1 max-h-56 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                     <option value="Choose product">Choose product</option>
                     {products.map(product => (<option data-pu="{product.prixUnitaire}">{product.designation}</option>))}
                 </select>
-                <input onChange={handleChange} value={newElement.quantity} id="quantity" name="quantity" className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="number" min="0" aria-label="Full name" required/>
-                <input onChange={handleChange} value={newElement.remise} id="remise" name="remise" className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="number" min="0" aria-label="Full name" required/>
+                <input onChange={handleChange} value={newElement.quantity} id="quantity" name="quantity" className="dark:text-gray-400 appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="number" min="0" aria-label="Full name" required/>
+                <input onChange={handleChange} value={newElement.remise} id="remise" name="remise" className="dark:text-gray-400 appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="number" min="0" aria-label="Full name" required/>
                 <button className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded" type="submit">
                 Add
                 </button>
             </div>
         </form>
+        <Link href="#"><a className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save <PlusCircleIcon/></a></Link>
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
