@@ -4,6 +4,9 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import ThemeToggler from './themeToogler'
+import useUser from '../../lib/useUser'
+import fetchJson from '../../lib/fetchJson'
 
 const navigation = [
   { name: 'Dashboard', href: '/', current: false },
@@ -18,11 +21,12 @@ function classNames(...classes) {
 }
 
 export default function Header() {
-  
+  const { user, mutateUser } = useUser();
   const router = useRouter()
   const navMemo = useMemo(() => navigation.map((nav) => ({ ...nav, current: nav.href === router.asPath })), [router]);
+  
   return (
-    <Disclosure as="nav" className="bg-gray-800 w-screen">
+    <Disclosure as="nav" className="bg-gray-800 w-full">
       {({ open }) => (
         <>
           <div className="mx-auto px-2 sm:px-6 lg:px-8">
@@ -51,6 +55,7 @@ export default function Header() {
                     alt="Workflow"
                   />
                 </div>
+                {user?.isLoggedIn === true && (
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
                     {navMemo.map((item) => (
@@ -68,7 +73,9 @@ export default function Header() {
                     ))}
                   </div>
                 </div>
+                )}
               </div>
+              {user?.isLoggedIn === true && (
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 <button
                   type="button"
@@ -77,17 +84,26 @@ export default function Header() {
                   <span className="sr-only">View notifications</span>
                   <BellIcon className="h-6 w-6" aria-hidden="true" />
                 </button>
-
+                <ThemeToggler />
                 {/* Profile dropdown */}
                 <Menu as="div" className="relative ml-3">
                   <div>
                     <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                       <span className="sr-only">Open user menu</span>
-                      <img
-                        className="h-8 w-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
-                      />
+                      {user.imageName ? (
+                        <img
+                          className="h-8 w-8 rounded-full"
+                          src={`https://127.0.0.1:8000/images/users/${user.imageName}`}
+                          alt=""
+                        />
+                      ) : (
+                        <img
+                          className="h-8 w-8 rounded-full"
+                          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                          alt=""
+                        />
+                      )}
+                      
                     </Menu.Button>
                   </div>
                   <Transition
@@ -103,7 +119,11 @@ export default function Header() {
                       <Menu.Item>
                         {({ active }) => (
                           <a
-                            href="#"
+                            href="/profile-ssr"
+                            onClick={async (e) => {
+                              e.preventDefault();
+                              router.push("/profile-ssr");
+                            }}
                             className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                           >
                             Your Profile
@@ -123,7 +143,15 @@ export default function Header() {
                       <Menu.Item>
                         {({ active }) => (
                           <a
-                            href="#"
+                            href="/api/logout"
+                            onClick={async (e) => {
+                              e.preventDefault();
+                              mutateUser(
+                                await fetchJson("/api/logout", { method: "POST" }),
+                                false,
+                              );
+                              router.push("/login");
+                            }}
                             className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                           >
                             Sign out
@@ -134,6 +162,16 @@ export default function Header() {
                   </Transition>
                 </Menu>
               </div>
+              )}
+               {user?.isLoggedIn === false && (
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                  <Link href="/login">
+                    <a
+                    className='text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium'
+                    >Login</a>
+                  </Link>
+                </div>
+               )}
             </div>
           </div>
 

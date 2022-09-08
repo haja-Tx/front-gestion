@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
   images: {
-    domains: [],
+    domains: ["tailwindui.com"],
+    loader: 'akamai',
+    path: '',
   },
-  reactStrictMode: true,
+  reactStrictMode: false,
 }
