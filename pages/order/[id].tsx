@@ -56,6 +56,7 @@ function Order({ order }) {
   export async function getStaticPaths() {  
     return { paths: [], fallback: 'blocking' }
   }
+
   // This also gets called at build time
   export async function getStaticProps({ params }) {
     // params contains the post `id`.

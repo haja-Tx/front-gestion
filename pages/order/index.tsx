@@ -2,8 +2,7 @@ import { Agent } from 'https'
 import { withIronSessionSsr } from 'iron-session/next';
 import moment from 'moment'
 import Link from 'next/link';
-import { sessionOptions } from '../../lib/session';
-import useUser from '../../lib/useUser'
+import { sessionOptions } from '../../lib/session'
 import { User } from '../api/user';
 
 
@@ -11,6 +10,9 @@ function Index({ orders, user }) {
     return (
       <>
       <h1>Liste des commandes {user.customer.company}</h1>
+      <Link href="/order/form">
+        <a className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Nouveau commande</a>
+      </Link>
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
@@ -71,9 +73,9 @@ function Index({ orders, user }) {
       });
       
       if (found !== undefined) {
-        url = `https://127.0.0.1:8000/api/customer-orders/${user.customer.id}`
+        url = `https://127.0.0.1:8000/api/customers/${user.customer.id}`
       } else {
-        url = `https://127.0.0.1:8000/api/user-orders/${user.id}`
+        url = `https://127.0.0.1:8000/api/users/${user.id}`
       }
       
       const response = await fetch(url,({

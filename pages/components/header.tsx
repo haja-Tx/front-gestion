@@ -26,7 +26,7 @@ export default function Header() {
   const navMemo = useMemo(() => navigation.map((nav) => ({ ...nav, current: nav.href === router.asPath })), [router]);
   
   return (
-    <Disclosure as="nav" className="bg-gray-800 w-screen">
+    <Disclosure as="nav" className="bg-gray-800 w-full">
       {({ open }) => (
         <>
           <div className="mx-auto px-2 sm:px-6 lg:px-8">
